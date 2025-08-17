@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 import wikipedia
-from utils.utillity import AnimeAPI
 
 
 class Searching(commands.Cog):
@@ -30,26 +29,6 @@ class Searching(commands.Cog):
             await ctx.send(f"Maaf ya, aku lagi gaenak badan jadinya ganemu deh apa yang kamu pengen cari, nanti kalo udah mendingan pasti aku cariin deh :3")
         except Exception as e:
             await ctx.send(f"Error : {e}")
-
-    @commands.command(name="anime", aliases=["anim"])
-    async def search_anime(self, ctx, *, title: str):
-        result = await AnimeAPI.search_anime_engine(title)
-        if not result:
-            return await ctx.send(embed=discord.Embed(description="Anime tidak ditemukan."))
-
-        embed = discord.Embed(
-            title=result["title"],
-            description=result["translated_description"],
-            color=discord.Color.blurple()
-        )
-        embed.add_field(name="Status", value=result["status"])
-        embed.add_field(name="Episode", value=result["episodes"])
-        embed.add_field(name="Musim", value=result["translated_season"])
-
-        if result.get("cover"):
-            embed.set_thumbnail(url=result["cover"])
-
-        await ctx.send(embed=embed)
 
 async def setup(bot):
     cog = Searching(bot)

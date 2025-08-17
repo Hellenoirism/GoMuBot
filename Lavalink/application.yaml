@@ -1,5 +1,5 @@
 server:
-  port: 2333
+  port: 433
   address: 127.0.0.1
   http2:
     enabled: true
@@ -9,11 +9,12 @@ lavalink:
     password: "hellen"
     bufferDurationMS: 400
     opusEncodingQuality: 10
-    resamplingQuality: HIGH
+    resamplingQuality: MEDIUM
     sources:
-      youtube: false  # disable default YouTube source (digantikan plugin)
+      youtube: false  
       bandcamp: false
       soundcloud: false
+      spotify: true
       twitch: false
       vimeo: false
       nico: false
@@ -35,11 +36,17 @@ lavalink:
     youtubeSearchEnabled: false
     soundcloudSearchEnabled: false
     gc-warnings: true
+  spotifyConfig:
+    clientId: "2a56091b6217412f835a057da569605d"
+    clientSecret: "ea106828a0914740bf7ea11e795f708c"
+    countryCode: "ID"
+    spDC: "AQDQD6U5yVmcPkrW75BKAxJ4p-bRmcYB1fIqLu1mUdUgXpF_mSzePvcTVUp8xvTg1JhsUZRyXMuL9812xo_alFPWfegC8sBtXuQunwYW0DBdXXYShsRItgA-hy0GBRsvaL6TIwrEHQiCe0jxGJIk1fbLKyfZJ6nyD1ENQOu0b16liUw0wqPC8Dfqa0bpN7rPpeg7afMkw_DQyhGDLg"
+
 
   plugins:
-    - dependency: "dev.lavalink.youtube:youtube-plugin:1.13.3"
+    - dependency: "dev.lavalink.youtube:youtube-plugin:1.13.4"
       snapshot: false
-    - dependency: "com.github.topi314.lavasrc:lavasrc-plugin:4.7.3"
+    - dependency: "com.github.topi314.lavasrc:lavasrc-plugin:4.8.0"
       snapshot: false
 
 plugins:
@@ -61,8 +68,8 @@ plugins:
         searching: false
   spotify:
     enabled: true
-    allowSearch: true 
-    allowDirectPlaylistIds: true 
+    allowSearch: true
+    allowDirectPlaylistIds: true
     clients:
       - WEB
       - MUSIC
@@ -70,15 +77,18 @@ plugins:
 
   lavasrc:
     providers:
-      - "ytsearch:%QUERY%"
-      - "spsearch: %QUERY%"
+      - "spsearch:"
+      - "ytsearch:"
     sources:
       spotify: true
       youtube: true
     spotify:
       clientId: "2a56091b6217412f835a057da569605d"
-      clientSecret: "55779f81b7bf4bbb86f76f5fd1c27d9e"
-      countryCode: "US"
+      clientSecret: "ea106828a0914740bf7ea11e795f708c"
+      spDC: "AQDQD6U5yVmcPkrW75BKAxJ4p-bRmcYB1fIqLu1mUdUgXpF_mSzePvcTVUp8xvTg1JhsUZRyXMuL9812xo_alFPWfegC8sBtXuQunwYW0DBdXXYShsRItgA-hy0GBRsvaL6TIwrEHQiCe0jxGJIk1fbLKyfZJ6nyD1ENQOu0b16liUw0wqPC8Dfqa0bpN7rPpeg7afMkw_DQyhGDLg"
+      countryCode: "US"   # default negara (bisa ID, US, dll.)
+      preferAnonymousToken: false
+      customTokenEndpoint: "https://accounts.spotify.com/api/token" 
       playlistLoadLimit: 10
       albumLoadLimit: 10
       resolveArtistsInSearch: true
