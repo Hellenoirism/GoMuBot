@@ -10,6 +10,8 @@ from datetime import timedelta, timezone, datetime
 
 WIB = timezone(timedelta(hours=7))
 
+asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+
 
 # === Load Environment Variables ===
 load_dotenv()
