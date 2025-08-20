@@ -98,7 +98,7 @@ class MusicCog(commands.Cog):
             embed = discord.Embed(
                 title="Kamu Lagi Ga Masuk Voice",
                 description="Enak aja mau make tapi ga dimasukin dulu, no no yaaa :3",
-                color=colour
+                color=self.colour
             )
             embed.set_author(name="GoMu", icon_url="https://media.giphy.com/media/gahyl3UyyjdLhg0KoR/giphy.gif")
             return await ctx.send(embed=embed)
@@ -141,7 +141,7 @@ class MusicCog(commands.Cog):
 
         #Searching Lagu di Spotify Search
         if not is_spotify_playlist and not is_spotify_url:
-            results = await player.node.get_tracks(query,filters=[pomice.filters.Equalizer.boost()], ctx=ctx)
+            results = await player.node.get_tracks(query,search_type=pomice.SearchType.spsearch,filters=[pomice.filters.Equalizer.boost()], ctx=ctx)
             if not results:
                 return await ctx.send(embed=discord.Embed(description="Lagu tidak ditemukan/query salah"), delete_after=8)
         else:
@@ -151,7 +151,7 @@ class MusicCog(commands.Cog):
         logger.info(f"Query Lagu: '{search}' selesai dalam {round((end - start) * 1000)}ms")
 
         if isinstance(results, pomice.Playlist):
-            await self._play_playlist(ctx, player, results, search)
+            await self._play_playlist(ctx, player, results)
         else:
             await self._play_single_track(ctx, player, results[0])
 
@@ -266,8 +266,53 @@ class MusicCog(commands.Cog):
             color=self.colour
         ))
     
+    @commands.command(name="remove", help="Menghapus lagu yang ada pada antrian")
+    async def remove(self, ctx: commands.Context, index: int):
+        channel = getattr(ctx.author.voice, "channel", None)
+        if not channel:
+            embed = discord.Embed(
+                title="Kamu Lagi Ga Masuk Voice",
+                description="Enak aja mau make tapi ga dimasukin dulu, no no yaaa :3",
+                color=self.colour
+            )
+            embed.set_author(name="GoMu", icon_url="https://media.giphy.com/media/gahyl3UyyjdLhg0KoR/giphy.gif")
+            return await ctx.send(embed=embed)
+        
+        if not ctx.voice_client:
+            await ctx.send(embed=discord.Embed(description="Kamu harus berada di voice yang sama" ,color=self.colour))
+            return
+        player : GomuPlayer = ctx.voice_client
+        
+        queue_list = player.queue.get_queue()
+
+        if not queue_list:
+            embed = discord.Embed(
+                description=f"Antrian lagu kosong",
+                color=self.colour
+            )
+            return await ctx.send(embed=embed)
+        
+        if index < 1 or index > len(queue_list):
+            return await ctx.send(embed=discord.Embed(
+                description=f"Nomor antrian tidak valid, Jumlah antrian saat ini {len(queue_list)}",
+                color=self.colour
+            ))
+        
+        removed_track = queue_list[index - 1]
+        player.queue.remove(removed_track)
+
+        embed=discord.Embed(
+            description=f"Track berhasil di remove, {removed_track.title}",
+            color=self.colour
+        )
+        embed.set_footer(text=f"Requested by : {ctx.author}", icon_url=f"{ctx.author.avatar.url}")
+
+        await ctx.send(embed=embed)
+
+
+
     @commands.command(name="clear", help="Membersihkan antrian lagu yang ada (Clear Queue)")
-    async def clear_queue(self, ctx: commands.Context, channel: discord.VoiceChannel = None):
+    async def clear_queue(self, ctx: commands.Context, *, channel: discord.VoiceChannel = None):
 
         channel = channel or getattr(ctx.author.voice, "channel", None)
         if not channel:

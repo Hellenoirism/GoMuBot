@@ -1,17 +1,13 @@
 import os
 import asyncio
-import pomice
 import discord
 from utils.utillity import logger
 from help import CustomHelpCommand
 from discord.ext import commands
 from dotenv import load_dotenv
-from datetime import timedelta, timezone, datetime
+from datetime import timedelta, timezone
 
 WIB = timezone(timedelta(hours=7))
-
-asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
-
 
 # === Load Environment Variables ===
 load_dotenv()
@@ -48,12 +44,10 @@ class GOMU(commands.AutoShardedBot):
             help_command=CustomHelpCommand(),
             case_insensitive=True,
         )
-        self.pool = pomice.NodePool()
 
     async def setup_hook(self):
         await self.load_extension("cog.lavalink")
         logger.info("Lavalink File Berhasil Di Load")
-        await asyncio.sleep(0.25)
         await self.load_extension("cog.user")
         logger.info("User File Berhasil Di Load")
         await self.load_extension("cog.music")
@@ -64,13 +58,13 @@ class GOMU(commands.AutoShardedBot):
     async def on_ready(self) -> None:
             logger.info(f"✅ Bot login sebagai {self.user} ({self.user.id})")
             activity = discord.Activity(type=discord.ActivityType.watching, name="Goverment")
-            await bot.change_presence(status=discord.Status.online, activity=activity)
+            await self.change_presence(status=discord.Status.online, activity=activity)
 
     async def on_message(self,message: discord.Message):
         if message.author.bot:
             return
         logger.debug(f"Pesan diterima: {message.content}")
-        await self.process_commands(message)
+        await bot.process_commands(message)
 
 
 # === Main Entry Point ===
